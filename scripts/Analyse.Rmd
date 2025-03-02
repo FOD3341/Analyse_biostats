@@ -1,0 +1,193 @@
+---
+title: "Markdown"
+author: "Félix-Olivier Dufour"
+date: "2025-03-02"
+output: html_document
+---
+
+```{r, include = FALSE}
+
+### Loading packages
+
+if (!require("GGally")) install.packages("GGally")
+
+if (!require("ggplot2")) install.packages("ggplot2")
+
+if (!require("ggeffects")) install.packages("ggeffects")
+
+if (!require("rsq")) install.packages("rsq")
+
+### Read.data
+data <- read.table("../raw_data/bdd_meneherbe.txt",header = T, sep = "")
+
+```
+
+Data visualisation
+
+```{r}
+# visualize data
+ggpairs(data)
+```
+
+#### 1 A) effet total augmentation d’un (1) µg/L de la concentration totale en herbicidessur la biomasse en plantes aquatiques
+
+```{r}
+# linear model
+
+moda <- lm(Plantes.aquat.kgm2 ~ Herbicides.ugL,data = data)
+
+summary(moda)
+
+# residual
+plot(moda)
+
+effecta <- ggeffect(moda,"Herbicides.ugL")
+
+
+# Visualisation avec données brutes
+ggplot() +
+  # Ajouter les points de données bruts
+  geom_point(data = data, aes(x = Herbicides.ugL, y = Plantes.aquat.kgm2), 
+             color = "blue", alpha = 0.6) +
+  # Ajouter la ligne de l'effet marginal estimé
+  geom_line(data = effecta, aes(x = x, y = predicted), color = "red") +
+  # Ajouter l'intervalle de confiance
+  geom_ribbon(data = effecta, aes(x = x, ymin = conf.low, ymax = conf.high), 
+              fill = "red", alpha = 0.2) +
+  labs(x = "Herbicides (µg/L)", y = "Plantes aquatiques (kg/m²)",
+       title = "Effet des herbicides sur la biomasse des plantes aquatiques") +
+  theme_minimal()
+```
+
+lorsque la concentration en herbicide augment de 1 ug/L, il y une diminution de -0.018853 kg/m2
+
+
+#### 1 B) effet total augmentation d’un (1) µg/L de la concentration totale en herbicides sur la fécondité des ménés
+
+```{r}
+# linear model
+
+modb <- lm(Fecondite.oeufs ~ Herbicides.ugL,data = data)
+
+summary(modb)
+
+# residual
+plot(modb)
+
+effectb <- ggeffect(modb,"Herbicides.ugL")
+
+
+# Visualisation avec données brutes
+ggplot() +
+  # Ajouter les points de données bruts
+  geom_point(data = data, aes(x = Herbicides.ugL, y = Fecondite.oeufs), 
+             color = "blue", alpha = 0.6) +
+  # Ajouter la ligne de l'effet marginal estimé
+  geom_line(data = effectb, aes(x = x, y = predicted), color = "red") +
+  # Ajouter l'intervalle de confiance
+  geom_ribbon(data = effectb, aes(x = x, ymin = conf.low, ymax = conf.high), 
+              fill = "red", alpha = 0.2) +
+  labs(x = "Herbicides (µg/L)", y = "Fécondité",
+       title = "Effet des herbicides sur la Fécondité") +
+  theme_minimal()
+```
+
+lorsque la concentration en herbicide augment de 1 ug/L, il y une diminution de -0.7205 de la fécondité
+
+```{r}
+# linear model
+
+moda <- lm(Plantes.aquat.kgm2 ~ Herbicides.ugL,data = data)
+
+summary(moda)
+
+# residual
+plot(moda)
+
+effecta <- ggeffect(moda,"Herbicides.ugL")
+
+
+# Visualisation avec données brutes
+ggplot() +
+  # Ajouter les points de données bruts
+  geom_point(data = data, aes(x = Herbicides.ugL, y = Plantes.aquat.kgm2), 
+             color = "blue", alpha = 0.6) +
+  # Ajouter la ligne de l'effet marginal estimé
+  geom_line(data = effecta, aes(x = x, y = predicted), color = "red") +
+  # Ajouter l'intervalle de confiance
+  geom_ribbon(data = effecta, aes(x = x, ymin = conf.low, ymax = conf.high), 
+              fill = "red", alpha = 0.2) +
+  labs(x = "Herbicides (µg/L)", y = "Plantes aquatiques (kg/m²)",
+       title = "Effet des herbicides sur la biomasse des plantes aquatiques") +
+  theme_minimal()
+```
+
+lorsque la concentration en herbicide augment de 1 ug/L, il y une diminution de -0.018853 kg/m2
+
+
+#### 2 effet total augmentation d’un (1) µg/L de la concentration totale en herbicides sur la fécondité des ménés
+
+```{r}
+# linear model
+
+mod2 <- lm(Fecondite.oeufs ~ Herbicides.ugL + Long.Fourche.mm + Crustaces.indL,data = data)
+
+summary(mod2)
+
+# residual
+plot(mod2)
+
+effect2 <- ggeffect(mod2,"Herbicides.ugL")
+
+
+# Visualisation avec données brutes
+ggplot() +
+  # Ajouter les points de données bruts
+  geom_point(data = data, aes(x = Herbicides.ugL, y = Fecondite.oeufs), 
+             color = "blue", alpha = 0.6) +
+  # Ajouter la ligne de l'effet marginal estimé
+  geom_line(data = effect2, aes(x = x, y = predicted), color = "red") +
+  # Ajouter l'intervalle de confiance
+  geom_ribbon(data = effect2, aes(x = x, ymin = conf.low, ymax = conf.high), 
+              fill = "red", alpha = 0.2) +
+  labs(x = "Herbicides (µg/L)", y = "Fécondité",
+       title = "Effet des herbicides sur la Fécondité") +
+  theme_minimal()
+
+
+effect2.1 <- ggeffect(mod2,"Long.Fourche.mm")
+
+# Visualisation avec données brutes
+ggplot() +
+  # Ajouter les points de données bruts
+  geom_point(data = data, aes(x = Long.Fourche.mm, y = Fecondite.oeufs), 
+             color = "blue", alpha = 0.6) +
+  # Ajouter la ligne de l'effet marginal estimé
+  geom_line(data = effect2.1, aes(x = x, y = predicted), color = "red") +
+  # Ajouter l'intervalle de confiance
+  geom_ribbon(data = effect2.1, aes(x = x, ymin = conf.low, ymax = conf.high), 
+              fill = "red", alpha = 0.2) +
+  labs(x = "Long.Fourche.mm", y = "Fécondité",
+       title = "Effet des herbicides sur la Fécondité") +
+  theme_minimal()
+
+# partitioner la variance
+
+rsq.partial(mod2, adj = TRUE)
+
+# Create a data frame with the partial R-squared values and variable names
+partial_rsq_data <- data.frame(
+  variable = c("Herbicides.ugL", "Long.Fourche.mm", "Crustaces.indL"),
+  partial_rsq = c(-0.002118828, 0.536350566, -0.007665933)
+)
+
+# Create the forest plot
+ggplot(partial_rsq_data, aes(x = partial_rsq, y = variable)) +
+  geom_point(size = 3) + 
+  geom_errorbarh(aes(xmin = partial_rsq - 0.05, xmax = partial_rsq + 0.05), height = 0.2) + 
+  theme_minimal() +
+  labs(x = "Partial R-squared", y = "Variable") +
+  theme(axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14), 
+        axis.text = element_text(size = 12))
+```
+Il ne semble pas y avoir d'effet important d'effet direct des herbicides sur la fécondité des ménés. Néanmoins, un effet indirect des herbicides au travers d'une altération de la croissance semble exister et affecter négativement la fécondité des ménés.
